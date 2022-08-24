@@ -11,7 +11,7 @@
     {% else %}
     <title>Blog</title>
     {% endif %}
-    {% block head %} {% endblock head %}
+    {% block head %}{% endblock %}
     <style>
         html
 { height: 100%;}
@@ -310,10 +310,10 @@ table tr td
   border-top: 1px solid #FFF;}
 
 
-
-
     </style>
 </head>
+
+{% block menu %}
 <div id="main">
     <div id="header">
         <div id="logo">
@@ -326,7 +326,7 @@ table tr td
         <div id="menubar">
             <ul id="menu">
                 <!-- put class="selected" in the li tag for the selected page - to highlight which page you're on -->
-                <li class="selected"><a href="/blog/static">Home</a></li>
+                <li class="selected"><a href="/">Home</a></li>
                 <li><a href="{{ url_for('posts.all_posts') }}">Posts</a></li>
                 {% if current_user.is_authenticated %}
 
@@ -339,10 +339,11 @@ table tr td
                 <li><a href="{{ url_for('users.register') }}">Registration</a></li>
                 <li><a href="{{ url_for('users.login') }}">Login</a></li>
                 {% endif %}
-                <li><a href="contacts/">Contact Us</a></li>
+                <li><a href="{{ url_for('main.contact') }}">Contact Us</a></li>
             </ul>
         </div>
     </div>
+    {% endblock %}
     <div id="site_content">
         {% if current_user.is_authenticated %}
         <h4>Blog, {{ current_user.username }}!</h4>
@@ -360,6 +361,11 @@ table tr td
                     {% endif %}
                     {% endwith %}
                     {% block content %}{% endblock %}
+                    {% block footer %}
+                        <div id="footer">
+      Copyright &copy; textured_blue | <a href="http://validator.w3.org/check?uri=referer">HTML5</a> | <a href="http://jigsaw.w3.org/css-validator/check/referer">CSS</a> | <a href="http://www.html5webtemplates.co.uk">Free CSS Templates</a>
+    </div>
+                    {% endblock %}
                 </div>
             </div>
         </main>

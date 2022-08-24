@@ -30,14 +30,35 @@ def new_post():
 @posts.route('/post/<int:post_id>')
 def post(post_id):
     post = Post.query.get_or_404(post_id)
-    return render_template('post.html', post=post,post_id=post_id)
+    return render_template('post.html', post=post, post_id=post_id)
 
-@posts.route('/post/update/')
-@login_required
-def update():
-    pass
 
-@posts.route('/post/delete/')
+@posts.route('/post/<int:post_id>/update/', methods=['GET', 'POST'])
 @login_required
-def delete():
-    pass
+def update(post_id):
+    post = Post.query.get_or_404(post_id)
+    if post.author != current_user:
+        abort(403)
+    form = CreatePost()
+    if form.validate_on_submit():
+        post.title = form.title.data
+        post.content = form.text.data
+        db.session.commit()
+        flash('Ваш пост был обновлен', 'Success!')
+        return redirect(url_for('users.user_posts', username=current_user.username))
+    elif request.method == 'GET':
+        form.title.data = post.title
+        form.text.data = post.content
+    return render_template('create_post.html', title='Обновление поста', form=form, legend='Обновление поста')
+
+
+@posts.route('/post/<int:post_id>/delete/', methods=['POST'])
+@login_required
+def delete(post_id):
+    post = Post.query.get_or_404(post_id)
+    if post.author != current_user:
+        abort(403)
+    db.session.delete(post)
+    db.session.commit()
+    flash('Пост был полностью удален', 'success')
+    return redirect(url_for('posts.all_posts'))

@@ -10,6 +10,6 @@ def main_page():
     return render_template('index.html')
 
 
-@main.route('/contacts/')
+@main.route('/contacts')
 def contact():
     return render_template('contact.html')
