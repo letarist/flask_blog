@@ -14,6 +14,8 @@ def create_application():
     bcrypt.init_app(application)
     from blog.mainapp.routes import main
     from users.routes import users
+    from posts.routes import posts
+    application.register_blueprint(posts)
     application.register_blueprint(users)
     application.register_blueprint(main)
     users_manager.init_app(application)
