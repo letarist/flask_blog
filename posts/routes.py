@@ -44,12 +44,14 @@ def update(post_id):
         post.title = form.title.data
         post.content = form.text.data
         db.session.commit()
-        flash('Ваш пост был обновлен', 'Success!')
-        return redirect(url_for('users.user_posts', username=current_user.username))
+        flash('Ваш пост обновлен!', 'success')
+        return redirect(url_for('posts.post', post_id=post.id))
     elif request.method == 'GET':
         form.title.data = post.title
         form.text.data = post.content
-    return render_template('create_post.html', title='Обновление поста', form=form, legend='Обновление поста')
+    return render_template('create_post.html', title='Обновление поста',
+                           form=form, legend='Обновление поста')
+
 
 
 @posts.route('/post/<int:post_id>/delete/', methods=['POST'])
