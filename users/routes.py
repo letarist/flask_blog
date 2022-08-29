@@ -3,7 +3,7 @@ from flask_login import login_user, current_user, logout_user, login_required
 from blog import db, bcrypt
 from blog.models import User, Post
 from users.forms import RegForm, ResetPasswordForm, ResetEmailForm, LoginForm, EditForm
-from users.utils import save_picture
+from users.utils import save_picture, send_reset_email
 
 users = Blueprint('users', __name__)
 
@@ -76,3 +76,34 @@ def user_posts(username):
     user = User.query.filter_by(username=username).first_or_404()
     posts = Post.query.filter_by(author=user).order_by(Post.date_posted.desc()).paginate(page=page, per_page=3)
     return render_template('user_posts.html', posts=posts, user=user)
+
+
+@users.route('/reset_password', methods=['GET', 'POST'])
+def reset_password():
+    if current_user.is_authenticated:
+        return redirect(url_for('posts.all_posts'))
+    form = ResetEmailForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        send_reset_email(user)
+        flash('Письмо о смене пароля отправлено на почту')
+        return redirect(url_for('blog.main_page'))
+    return render_template('reset_password.html', title='Сброс пароля', form=form)
+
+
+@users.route('/reset_password/<token>')
+def reset_token(token):
+    if current_user.is_authentiated:
+        return redirect(url_for('posts.all_post'))
+    user = User.confirm_token(token)
+    if user is None:
+        flash('Недействительный токен', 'warning')
+        return redirect(url_for('posts.all_posts'))
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        hashed_pass = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user.password = hashed_pass
+        db.session.commit()
+        flash('Ваш пароль был заменен','success')
+        return redirect(url_for('posts.all_posts'))
+    return render_template('rest_token.html',title='Сброс пароля',form=form)

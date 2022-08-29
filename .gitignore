@@ -13,3 +13,4 @@ __pycache__/
 build/
 node_modules/
 .idea
+.env
