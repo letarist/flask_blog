@@ -11,7 +11,7 @@ bcrypt = Bcrypt()
 mail = Mail()
 
 
-def create_application():
+def create_application(config_class=Conf):
     application = Flask(__name__)
     application.config.from_object(Conf)
     bcrypt.init_app(application)

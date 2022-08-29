@@ -87,14 +87,12 @@ def reset_password():
         user = User.query.filter_by(email=form.email.data).first()
         send_reset_email(user)
         flash('Письмо о смене пароля отправлено на почту')
-        return redirect(url_for('blog.main_page'))
+        return redirect(url_for('main.main_page'))
     return render_template('reset_password.html', title='Сброс пароля', form=form)
 
 
-@users.route('/reset_password/<token>')
+@users.route('/reset_password/<token>',methods=['GET','POST'])
 def reset_token(token):
-    if current_user.is_authentiated:
-        return redirect(url_for('posts.all_post'))
     user = User.confirm_token(token)
     if user is None:
         flash('Недействительный токен', 'warning')
@@ -106,4 +104,4 @@ def reset_token(token):
         db.session.commit()
         flash('Ваш пароль был заменен','success')
         return redirect(url_for('posts.all_posts'))
-    return render_template('rest_token.html',title='Сброс пароля',form=form)
+    return render_template('reset_token.html',title='Сброс пароля',form=form)

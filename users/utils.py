@@ -23,5 +23,5 @@ def save_picture(from_picture):
 def send_reset_email(user):
     token = user.reset_token()
     message = Message('Запрос на смену пароля', sender='freedayz@rambler.ru', recipients=[user.email])
-    message.body = f'Чтобы сбросить пароль перейдите по ссылке {url_for("users.reset_password", token=token, _external=True)}'
+    message.body = f'Чтобы сбросить пароль перейдите по ссылке {url_for("users.reset_token", token=token, _external=True)}'
     mail.send(message)

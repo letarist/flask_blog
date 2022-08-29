@@ -1,5 +1,5 @@
 from datetime import datetime, timezone, timedelta
-from jwt import encode, decode
+import jwt
 from blog import db, users_manager
 from flask import current_app
 from flask_login import UserMixin, current_user
@@ -19,26 +19,27 @@ class User(db.Model, UserMixin):
     posts = db.relationship('Post', backref='author', lazy=True)
 
     def reset_token(self, expirations=1800):
-        reset_token = encode({"confirm": self.id, "exp": datetime.now(tz=timezone.utc) + timedelta(seconds=expirations)},
+        reset_token = jwt.encode(
+            {"confirm": self.id, "exp": datetime.now(tz=timezone.utc) + timedelta(seconds=expirations)},
             current_app.config['SECRET_KEY'],
-            algorithm="HS256"
             )
         return reset_token
 
     @staticmethod
     def confirm_token(token):
         try:
-            data = decode(
+            data = jwt.decode(
                 token,
                 current_app.config['SECRET_KEY'],
                 conf_time=timedelta(seconds=10),
                 algorithms="HS256"
             )
+            user_id = data['confirm']
         except:
             return False
-        if data.get('confirm') != current_user.id:
+        if data.get('confirm') != user_id:
             return False
-        return User.query.get(data.get('confirm'))
+        return User.query.get(user_id)
 
 
 class Post(db.Model):
