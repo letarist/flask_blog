@@ -17,8 +17,8 @@ def create_application(config_class=Conf):
     bcrypt.init_app(application)
     mail.init_app(application)
     from blog.mainapp.routes import main
-    from users.routes import users
-    from posts.routes import posts
+    from blog.users.routes import users
+    from blog.posts.routes import posts
     application.register_blueprint(posts)
     application.register_blueprint(users)
     application.register_blueprint(main)
