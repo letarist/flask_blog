@@ -19,8 +19,8 @@ def create_application(config_class=Conf):
     from blog.mainapp.routes import main
     from blog.users.routes import users
     from blog.posts.routes import posts
-    from users.routes import users
-    from posts.routes import posts
+    from blog.users.routes import users
+    from blog.posts.routes import posts
     from errors.routes import errors
     application.register_blueprint(posts)
     application.register_blueprint(users)
