@@ -19,9 +19,11 @@ def create_application(config_class=Conf):
     from blog.mainapp.routes import main
     from users.routes import users
     from posts.routes import posts
+    from errors.routes import errors
     application.register_blueprint(posts)
     application.register_blueprint(users)
     application.register_blueprint(main)
+    application.register_blueprint(errors)
     users_manager.init_app(application)
     db.init_app(application)
     return application
